@@ -1,13 +1,9 @@
 async function drawPlot() {
-
-  const data = await d3.csv("https://raw.githubusercontent.com/nikomc/dataviz_blog/main/20201003_RD_Expenditures/US_expenditures_by_category_1962_2025_pivot.csv", d3.autoType);
-
-  console.log(data);
-  const dateParser = d3.timeParse("%m/%e/%Y")
+  const dateParser = d3.timeParse("%Y")
 
   // 1. Access data
-  const dataset = await d3.csv("./stock_data_tidy.csv", d3.autoType);
-
+  const data = await d3.csv("https://raw.githubusercontent.com/nikomc/dataviz_blog/main/20201003_RD_Expenditures/US_expenditures_by_category_1962_2025_pivot.csv", d3.autoType);
+  console.log(data);
   const yAccessor = d => d.value
   const xAccessor = d => dateParser(d.date)
   const colorAccessor = d => d.variable
