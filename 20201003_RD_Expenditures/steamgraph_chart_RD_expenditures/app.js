@@ -101,21 +101,70 @@ async function drawPlot() {
     )
     .call(g => g.selectAll(".tick line").attr("stroke", "lightgray"));
 
-// I call data plotting down here, so that it is on top of axes lines.
-  bounds.append("g")
-    .selectAll("path")
-    .data(stackedData)
-    .join("path")
-      .attr("fill", key => colorScale(key))
-      .attr("d", area)
-      .append("title")  //Make tooltip
-			.text(function(d) {
-				return d.key;
-			});;
-
   // hide last child element; the tick for 2030 year.
   d3.select('.tick:last-child')
     .style("opacity", 0);
 
-}
+  bounds.append("g")
+    .selectAll("path")
+    .data(stackedData)
+    .join("path")
+      .attr("class", "myArea")
+      .attr("fill", key => colorScale(key))
+      .attr("d", area)
+      .append("title")
+      .text(function(d) {
+        return d.key;
+      })
+      .on("mouseenter", onMouseEnter)
+      // .on("mouseleave", onMouseLeave);
+
+    // see https://www.d3-graph-gallery.com/graph/streamgraph_template.html
+    // see https://observablehq.com/@d3/d3v6-migration-guide#events
+    // see http://bl.ocks.org/WillTurman/4631136
+
+    const tooltip = d3.select("#tooltip")
+    function onMouseEnter(event, d) {
+      console.log(event);
+      const areaHighlight = d3.select(".myArea")
+        .attr("class", "areaHighlight")
+        .style("opacity", 1)
+        .style("fill", "maroon")
+        .style("pointer-events", "none");
+      }
+
+    // const formatHumidity = d3.format(".2f")
+    // tooltip.select("#humidity")
+    //   .text(formatHumidity(yAccessor(datum)))
+    //
+    // const formatDewPoint = d3.format(".2f")
+    // tooltip.select("#dew-point")
+    //   .text(formatDewPoint(xAccessor(datum)))
+    //
+    // const dateParser = d3.timeParse("%Y-%m-%d")
+    // const formatDate = d3.timeFormat("%B %A %-d, %Y")
+    // tooltip.select("#date")
+    //   .text(formatDate(dateParser(datum.date)))
+    //
+    // const x = xScale(xAccessor(datum))
+    // + dimensions.margin.left
+    // const y = yScale(yAccessor(datum))
+    // + dimensions.margin.top
+    //
+    // tooltip.style("transform", `translate(`
+    // + `calc( -50% + ${x}px),`
+    // + `calc(-100% + ${y}px)`
+    // + `)`)
+    //
+    // tooltip.style("opacity", 1)
+    // }
+    //
+    // function onMouseLeave(event, d) {
+    // d3.selectAll(".tooltipDot")
+    // .remove()
+    //
+    // tooltip.style("opacity", 0)
+    // }
+
+  }
 drawPlot();
