@@ -29,19 +29,72 @@ async function drawPlot() {
 
   console.table(dataset[0])
 
-{
-  const chart = vl.markCircle({size: 15, opacity: 0.5})
-    .data(dataset)
-    .encode(
-      vl.x().fieldQ('following_count'),
-      vl.y().fieldQ('followers_count'),
-      v1.color().fieldN('gender')
-    )
-    .render()
-    .then(viewElement => {
-          document.getElementById('view').appendChild(viewElement);
-        });
-}
+  {
+    "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+    "data": {
+      "url": "https://raw.githubusercontent.com/nikomc/dataviz_blog/main/20201002_Twitter_SHERP_Disparities/SHERP_tweeter_data_clean.csv"
+    },
+    "layer": [
+      {
+        "mark": {
+          "type": "circle",
+          "filled": true
+        },
+        "encoding": {
+          "x": {
+            "field": "following_count",
+            "type": "quantitative"
+          },
+          "y": {
+            "field": "followers_count",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "line",
+          "color": "firebrick"
+        },
+        "transform": [
+          {
+            "regression": "following_count",
+            "on": "followers_count"
+          }
+        ],
+        "encoding": {
+          "x": {
+            "field": "following_count",
+            "type": "quantitative"
+          },
+          "y": {
+            "field": "followers_count",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "transform": [
+          {
+            "regression": "following_count",
+            "on": "followers_count",
+            "params": true
+          },
+          {"calculate": "'R²: '+format(datum.rSquared, '.2f')", "as": "R2"}
+        ],
+        "mark": {
+          "type": "text",
+          "color": "firebrick",
+          "x": "width",
+          "align": "right",
+          "y": -5
+        },
+        "encoding": {
+          "text": {"type": "nominal", "field": "R2"}
+        }
+      }
+    ]
+  }
 
 }
 drawPlot();
