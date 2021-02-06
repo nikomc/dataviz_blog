@@ -1,2 +1,2 @@
 # dataviz_blog
-Data visualization blogs for Scienceline.org; include Jupyter notebooks, animated SVGs, and JavaScript.
+Data visualization blogs for nikoviz.com; include Jupyter notebooks and JavaScript.
