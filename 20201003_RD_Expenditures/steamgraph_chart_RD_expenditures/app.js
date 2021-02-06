@@ -1,5 +1,5 @@
 async function drawPlot() {
-  const dateParser = d3.timeParse("%Y")
+  const dateParser = d3.timeParse("%Y");
 
   // 1. Access data
   const data = await d3.csv("https://raw.githubusercontent.com/nikomc/dataviz_blog/main/20201003_RD_Expenditures/US_expenditures_by_category_1962_2025_pivot_no_commas.csv", d3.autoType).then(
@@ -10,7 +10,6 @@ async function drawPlot() {
       return data;
     }
   );
-  // console.log(data);
 
   const series = d3.stack()
     .keys(data.columns.slice(1))
@@ -18,12 +17,9 @@ async function drawPlot() {
     .order(d3.stackOrderInsideOut);
 
   const stackedData = series(data);
-  // console.log(stackedData)
 
   const yAccessor = d => d.date;
-  // const colorAccessor = d => d.variable
-
-  // 2. Create chart dimensions
+  var keys = data.columns.slice(1);
 
   let dimensions = {
     width: window.innerWidth * 0.8,
@@ -34,25 +30,22 @@ async function drawPlot() {
       bottom: 30,
       left: 30,
     },
-  }
-  dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right
-  dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom
+  };
 
-  // // 3. Draw canvas
+  dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right;
+  dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
 
   const wrapper = d3.select("#chart")
     .append("svg")
       .attr("width", dimensions.width)
-      .attr("height", dimensions.height)
+      .attr("height", dimensions.height);
 
   const bounds = wrapper.append("g")
       .attr("transform", `translate(${
         dimensions.margin.left
       }, ${
         dimensions.margin.top
-      })`)
-
-  // // 4. Create scales
+      })`);
 
   const xScale = d3.scaleLinear()
     .domain([d3.min(stackedData, d => d3.min(d, d => d[0])), d3.max(stackedData, d => d3.max(d, d => d[1]))])
@@ -67,24 +60,16 @@ async function drawPlot() {
     .domain(data.columns.slice(1))
     .range(d3.schemeCategory10);
 
-  const key = d => d.columns.slice(1);
-  console.log(key);
-
-  // 5. Draw data
-
   const area = d3.area()
     .curve(d3.curveBasis)
     .x0(d => xScale(d[0]))
     .x1(d => xScale(d[1]))
     .y(d => yScale(d.data.date));
 
-
-
   // 6. Draw peripherals
   const axisLeft = d3
     .axisLeft(yScale)
     .ticks(10)
-    // .tickSizeOuter(1000)
     .tickSize(-dimensions.boundedWidth);
 
   const axisVertical = bounds
@@ -105,7 +90,7 @@ async function drawPlot() {
   d3.select('.tick:last-child')
     .style("opacity", 0);
 
-  bounds.append("g")
+  const plots = bounds.append("g")
     .selectAll("path")
     .data(stackedData)
     .join("path")
@@ -115,56 +100,6 @@ async function drawPlot() {
       .append("title")
       .text(function(d) {
         return d.key;
-      })
-      .on("mouseenter", onMouseEnter)
-      // .on("mouseleave", onMouseLeave);
-
-    // see https://www.d3-graph-gallery.com/graph/streamgraph_template.html
-    // see https://observablehq.com/@d3/d3v6-migration-guide#events
-    // see http://bl.ocks.org/WillTurman/4631136
-
-    const tooltip = d3.select("#tooltip")
-    function onMouseEnter(event, d) {
-      console.log(event);
-      const areaHighlight = d3.select(".myArea")
-        .attr("class", "areaHighlight")
-        .style("opacity", 1)
-        .style("fill", "maroon")
-        .style("pointer-events", "none");
-      }
-
-    // const formatHumidity = d3.format(".2f")
-    // tooltip.select("#humidity")
-    //   .text(formatHumidity(yAccessor(datum)))
-    //
-    // const formatDewPoint = d3.format(".2f")
-    // tooltip.select("#dew-point")
-    //   .text(formatDewPoint(xAccessor(datum)))
-    //
-    // const dateParser = d3.timeParse("%Y-%m-%d")
-    // const formatDate = d3.timeFormat("%B %A %-d, %Y")
-    // tooltip.select("#date")
-    //   .text(formatDate(dateParser(datum.date)))
-    //
-    // const x = xScale(xAccessor(datum))
-    // + dimensions.margin.left
-    // const y = yScale(yAccessor(datum))
-    // + dimensions.margin.top
-    //
-    // tooltip.style("transform", `translate(`
-    // + `calc( -50% + ${x}px),`
-    // + `calc(-100% + ${y}px)`
-    // + `)`)
-    //
-    // tooltip.style("opacity", 1)
-    // }
-    //
-    // function onMouseLeave(event, d) {
-    // d3.selectAll(".tooltipDot")
-    // .remove()
-    //
-    // tooltip.style("opacity", 0)
-    // }
-
+      });
   }
 drawPlot();
